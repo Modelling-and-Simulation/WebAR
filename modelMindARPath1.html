@@ -677,10 +677,13 @@
 		///////////////////////////////////////////////////////////
 
 		const start = async () => {
+			console.log("call start");
 			await mindarThree.start();
+			console.log("start done");
 			renderer.setAnimationLoop(() => {
 				renderer.render(scene, camera);
 			});
+			console.log("setAnimationLoop done");
 		}
 
 
