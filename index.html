@@ -1,0 +1,853 @@
+<html>
+
+<head>
+    <title>Three.js and AR.js - examples</title>
+    <link rel=stylesheet href="css/index.css" />
+    <link rel=stylesheet href="css/popup.css" />
+</head>
+
+<body>
+
+    <div class="bigTitle">
+        <P>AR MODEL LOADING COMPARITION </P><br>
+    </div>
+
+    <hr>
+    The goal of this collection is to compare the loading times of the 3D models(using localhost) and hosted platform(https://arloader.000webhostapp.com/).
+    <br /><br />
+    Viewing these AR examples will require a device with a camera and one or both of the <a class="toc"
+        href="markers/hiro.png">Hiro</a> and <a class="toc" href="markers/kanji.png">Kanji</a> marker patterns (either
+    printed or displayed on a second device).
+
+    Also this collection consist of options in image tracking with NFT, loading content quality wise and change the augmenting content 
+    <br /><br />
+
+    <hr />
+
+    <div class="box">
+        <a class="button" href="#popup1">About Device</a>
+    </div>
+
+    <div id="popup1" class="overlay">
+        <div class="popup">
+            <h2>Device Details</h2>
+            <a class="close" href="#">&times;</a>
+            <div class="content">
+                Device Capability List
+                <div class="product-content">
+                    <div class="product-detail">
+                        <h2>Capabilities</h2>
+                        <p>These are the Different Capabilties from current running browser of the Device</p>
+                        <h3>Browser Information: </h3>
+                        <p>General information about the browser and operating system</p>
+                        <ul>
+                            <li>User Agent(string of browser): <span id="userAgentDetails">Initializing</span></li>
+                            <li>OS Platform: <span id="osDetails">Initializing</span></li>
+                            <li>Preferred Language: <span id="langDetails">Initializing</span></li>
+                        </ul>
+                        <hr />
+                        <h3>Device Specification: </h3>
+                        <p>Determine the device's Performance Details</p>
+                        <ul>
+                            <li>Amount Memory in GB: <span id="memoryDetails">Initializing</span></li>
+                            <li>CPU details: <span id="cpuDetails">Initializing</span></li>
+                            <li>GPU details:</li> <span id="gpuDetails">Initializing</span>
+                        </ul>
+                        <hr />
+                        <h3>Network Information: </h3>
+                        <p>Determine the device's Network Informations</p>
+                        <ul>
+                            <li>Effective type of the connection (e.g., '4g', '3g', '2g', 'slow-2g'): <span
+                                    id="connType">Initializing</span></li>
+                            <li>Downlink speed of the connection in Mbps: <span id="speedDetails">Initializing</span>
+                            </li>
+                            <li>User requested a reduced data usage mode: <span id="modeDetails">Initializing</span>
+                            </li>
+                        </ul>
+                        <hr />
+                        <h3>Battery Status: </h3>
+                        <p>Determine the device's Battery Status</p>
+                        <ul>
+                            <li>Battery Status: <span id="battDetails">Initializing</span></li>
+                        </ul>
+                        <hr />
+                        <h3>Geolocation: </h3>
+                        <p>User's geographical location</p>
+                        <ul>
+                            <li>Latitude: <span id="geoDetails1">Initializing</span></li>
+                            <li>Longitude: <span id="geoDetails2">Initializing</span></li>
+                        </ul>
+                        <hr />
+                        <h3>Device Orientation: </h3>
+                        <p>Check if the device supports orientation events and get the device's current orientation</p>
+                        <ul>
+                            <li>Current orientation: <span id="oriDetails">Initializing</span></li>
+                        </ul>
+                        <hr />
+                        <h3>Media Capabilities: </h3>
+                        <p>Determine the device's media capabilities</p>
+                        <ul>
+                            <li>Codec is supported: <span id="codecDetails">Initializing</span></li>
+                            <li>Power-efficient option: <span id="powerDetails">Initializing</span></li>
+                        </ul>
+                        <hr />
+                        <h3>Permissions: </h3>
+                        <p>Access to the Permissions</p>
+                        <ul>
+                            <li>Geolocation: <span id="geoDetails">Initializing</span></li>
+                            <li>Camera: <span id="camDetails">Initializing</span></li>
+                            <li>Microphone: <span id="micDetails">Initializing</span></li>
+                            <li>Notifications: <span id="notiDetails">Initializing</span></li>
+                            <li>Clipboard-Write: <span id="clipWDetails">Initializing</span></li>
+                            <li>Push: <span id="pushDetails">Initializing</span></li>
+                            <li>Midi: <span id="midiDetails">Initializing</span></li>
+                            <li>Ambient-light-sensor: <span id="lightDetails">Initializing</span></li>
+                            <li>Accelerometer: <span id="accelerDetails">Initializing</span></li>
+                            <li>Gyroscope: <span id="gyroDetails">Initializing</span></li>
+                            <li>Magnetometer: <span id="magnetDetails">Initializing</span></li>
+                            <li>Clipboard-read: <span id="clipRDetails">Initializing</span></li>
+                            <li>Speaker-selection: <span id="speakerDetails">Initializing</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="fancy">
+        <a href="hello-cube.html">
+            <img src="images/demo/hello-cube.png" class="superImage" />
+            <br />Basic Cube</a>
+        <p class="superText">A basic scene that superimposes a cube on a Hiro marker.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="custom-patterns.html">
+            <img src="images/demo/custom-patterns.png" class="superImage" />
+            <br />Many Cubes</a>
+        <p class="superText">A scene that superimposes different colored cubes on a Hiro, Kanji, and letter markers.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="smoothed-controls.html">
+            <img src="images/demo/hello-cube.png" class="superImage" />
+            <br />Smoothed Controls</a>
+        <p class="superText">The basic scene, recreated using "smoothed controls", which interpolates the marker
+            location from frame to frame at an adjustable rate.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="texture.html">
+            <img src="images/demo/texture.png" class="superImage" />
+            <br />Image Texture</a>
+        <p class="superText">An image is positioned to cover a Hiro marker.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="globe.html">
+            <img src="images/demo/globe.png" class="superImage" />
+            <br />Rotating Globe</a>
+        <p class="superText">A rotating globe (illuminated by a point light) is positioned above a Hiro marker.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="video.html">
+            <img src="images/demo/video.png" class="superImage" />
+            <br />Video Texture</a>
+        <p class="superText">A flat plane, with a video for a texture, is positioned to cover a Hiro marker.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="shader.html">
+            <img src="images/demo/shader.png" class="superImage" />
+            <br />Shader</a>
+        <p class="superText">A flat plane moves up and down above a Hiro marker; position and tint color are controlled
+            by vertex and fragment shaders.
+        </p>
+    </div> -->
+
+    <div class="fancy">
+        <a href="modelold.html">
+            <img src="images/demo/Toothless.png" class="superImage" />
+            <br />Loading 3D Model 01</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker. </p>
+    </div>
+
+    <div class="fancy">
+        <a href="model2.html">
+            <img src="images/demo/Pirate.png" class="superImage" />
+            <br />Loading 3D Model 02</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model3.html">
+            <img src="images/demo/Polywood.png" class="superImage" />
+            <br />Loading 3D Model 03</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model4.html">
+            <img src="images/demo/SeaHawk.png" class="superImage" />
+            <br />Loading 3D Model 04</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model5.html">
+            <img src="images/demo/Future_Gun.png" class="superImage" />
+            <br />Loading 3D Model 05</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model6.html">
+            <img src="images/demo/Semi_Truck.png" class="superImage" />
+            <br />Loading 3D Model 06</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model7.html">
+            <img src="images/demo/Gull.png" class="superImage" />
+            <br />Loading 3D Model 07</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model8.html">
+            <img src="images/demo/Wolf.png" class="superImage" />
+            <br />Loading 3D Model 08</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model9.html">
+            <img src="images/demo/Gloves.png" class="superImage" />
+            <br />Loading 3D Model 09</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model10.html">
+            <img src="images/demo/Spaceship.png" class="superImage" />
+            <br />Loading 3D Model 10</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model11.html">
+            <img src="images/demo/Skull2.png" class="superImage" />
+            <br />Loading 3D Model 11</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model12.html">
+            <img src="images/demo/Penguin.png" class="superImage" />
+            <br />Loading 3D Model 12</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model13.html">
+            <img src="images/demo/Benze.png" class="superImage" />
+            <br />Loading 3D Model 13</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model14.html">
+            <img src="images/demo/Bench.png" class="superImage" />
+            <br />Loading 3D Model 14</a>
+        <p class="superText">A LOW resolution 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.
+        </p>
+    </div>
+
+    <div class="fancy">
+        <a href="model15.html">
+            <img src="images/demo/Bench.png" class="superImage" />
+            <br />Loading 3D Model 15</a>
+        <p class="superText">A High Resolution 3D model (obj and mtl files) are loaded and displayed above a Hiro
+            marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model16.html">
+            <img src="images/demo/E45Aircraft.png" class="superImage" />
+            <br />Loading 3D Model 16</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model17.html">
+            <img src="images/demo/InDoorPlant.png" class="superImage" />
+            <br />Loading 3D Model 17</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a Hiro marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model18.html">
+            <img src="images/demo/dynamicAugment.jpg" class="superImage" />
+            <br />Loading Dynamic 3D Models</a>
+        <p class="superText">Dynamic Marker Tracking for 3D and 2D contents.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model19.html">
+            <img src="images/demo/humanFaceFinal.png" class="superImage" />
+            <br />Loading Image tracking Model 01</a>
+        <p class="superText">A 3D model (.glb files) are loaded and displayed above a image.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="modelLod.html">
+            <img src="images/demo/shoe_667x1000.jpg" class="superImage" />
+            <br />Loading Image tracking Model 02</a>
+        <p class="superText">A 3D model (.glb files) are loaded and displayed above a image.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="model20.html">
+            <img src="images/demo/add_1000x664.jpg" class="superImage" />
+            <br />Loading Image tracking Model 03</a>
+        <p class="superText">A 3D model (.glb files) are loaded and displayed above a image.</p>
+    </div>
+
+
+    <!-- <div class="fancy">
+        <a href="modelDynamicList.html">
+            <img src="images/demo/book_667x1000.jpg" class="superImage" />
+            <br />Loading Image tracking Model 04</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a image.</p>
+    </div> -->
+
+    <!-- <div class="fancy">
+        <a href="modelDynamic.html">
+            <img src="images/demo/shoe_667x1000.jpg" class="superImage" />
+            <br />Loading Image tracking Model 05</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above a image.</p>
+    </div> -->
+
+    <div class="fancy">
+        <a href="modelLodMarker.html">
+            <img src="images/demo/dynamicAugment.jpg" class="superImage" />
+            <br />Loading Makrer tracking Model with different Qualities</a>
+        <p class="superText">A 3D model (obj and mtl files) are loaded and displayed above the marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="modelLodChess.html">
+            <img src="images/demo/chess_1000x666.jpg" class="superImage" />
+            <br />Loading Image tracking(NFT) Model with different Qualities</a>
+        <p class="superText">A 3D model (.glb files) are loaded and displayed above the marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="modelLodMarkerchess.html">
+            <img src="images/demo/chess_1000x666.jpg" class="superImage" />
+            <br />Loading Marker tracking Model with different Qualities and different markers</a>
+        <p class="superText">A 3D model (.glb files) are loaded and displayed above the marker.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="modelMindARPath1.html">
+            <img src="images/demo/chess_1000x666.jpg" class="superImage" />
+            <br />Suervay Path1</a>
+        <p class="superText">Loading different contents for different markers.</p>
+    </div>
+
+    <div class="fancy">
+        <a href="modelMindARPath2.html">
+            <img src="images/demo/chess_1000x666.jpg" class="superImage" />
+            <br />Suervay Path2</a>
+        <p class="superText">Loading different contents for the same marker.</p>
+    </div>
+
+    <!-- <div class="fancy">
+<a href="hole-box.html">
+<img src="images/demo/hole-box.png" class="superImage" />
+<br/>Hole in the Floor (Box)</a>
+<p class ="superText">A "hole in the floor" effect. Uses a box geometry to mask the hidden parts of the hole.
+</p>
+</div>
+
+<div class="fancy">
+<a href="hole-plane.html">
+<img src="images/demo/hole-box.png" class="superImage" />
+<br/>Hole in the Floor (Plane)</a>
+<p class ="superText">Another "hole in the floor" effect, using a plane geometry to mask the hidden parts of the hole.
+</p>
+</div>
+
+<div class="fancy">
+<a href="hole-ring.html">
+<img src="images/demo/hole-ring.png" class="superImage" />
+<br/>Hole in the Floor (Ring)</a>
+<p class ="superText">A cylindrical "hole in the floor" effect, using a ring geometry to mask the hidden parts of the hole.
+</p>
+</div> -->
+    <!-- 
+<div class="fancy">
+<a href="basic-scene.html" target="_blank">
+<img src="images/demo/basic-scene.png" class="superImage" />
+<br/>Basic Scene</a>
+<p class ="superText"> A basic scene created with only Three.js (no AR), useful for prototyping ideas before adding in AR components. </p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="water-effect.html" target="_blank">
+<img src="images/demo/water-effect.png" class="superImage" />
+<br/>Water Effect (no AR)</a>
+<p class ="superText"> An animated effect (using shaders) that looks like water flowing 
+out from a central point and being absorbed into the floor. (No AR.)</p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="water-effect-AR.html" target="_blank">
+<img src="images/demo/water-effect-AR.png" class="superImage" />
+<br/>Water Effect (AR version)</a>
+<p class ="superText"> An animated effect (using shaders) that looks like water flowing 
+out from a cylindrical hole (displayed above a Hiro marker), and being absorbed into the floor. 
+<br/>
+</p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="keyboard-mesh-move.html" target="_blank">
+<img src="images/demo/mesh-movement.png" class="superImage" />
+<br/>Keyboard-Based Object Movement</a>
+<p class ="superText"> Move a cube around the screen with the keyboard. Controls (<a href="images/movement-controls.png">image</a>): <br>W/A/S/D -- move Forward/Left/Backward/Right (standard), <br>Q/E -- rotate Left/Right, <br>R/F -- move Up/Down (think: <b>R</b>ise/<b>F</b>all), <br>T/G -- tilt Up/Down (think: look at <b>T</b>ower/<b>G</b>round).</p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="keyboard-camera-move.html" target="_blank">
+<img src="images/demo/camera-movement.png" class="superImage" />
+<br/>Keyboard-Based Camera Movement</a>
+<p class ="superText"> Move a camera around the screen with the keyboard. <br>Uses same controls as Object Movement example. </p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="portal-half-keyboard-test.html" target="_blank">
+<img src="images/demo/portal-half-keyboard-test.png" class="superImage" />
+<br/>Portal Test</a>
+<p class ="superText"> Creating a "portal to another world" effect. Camera moves using same controls as Object Movement example. Only visible from one side. 
+<br/>Not very robust -- see the following portal examples instead.</p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="stencil-test.html" target="_blank">
+<img src="images/demo/stencil-test.png" class="superImage" />
+<br/>Stencil Buffer Test</a>
+<p class ="superText"> A simple example that uses layers and the stencil buffer to render part of the scene
+onto a plane in the scene. Camera moves using same controls as Object Movement example. Useful for understanding portal view example. </p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="clipping-planes.html" target="_blank">
+<img src="images/demo/clipping-planes.png" class="superImage" />
+<br/>Clipping Planes</a>
+<p class ="superText"> A simple example that sets up a clipping plane (aligned with a plane mesh) to limit the volume of the scene that is rendered. Useful for understanding portal view example. </p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="portal-view.html" target="_blank">
+<img src="images/demo/portal-view.png" class="superImage" />
+<br/>Portal View</a>
+<p class ="superText"> A "portal to another world" effect. Portal visible through both sides. 
+<br/>Camera moves using same controls as Object Movement example; also, press 1, 2, or 3 to see the view from different cameras. 
+<br/>Uses stencil buffer and clipping planes for accurate rendering. 
+ </p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="portal-view-AR.html" target="_blank">
+<img src="images/demo/portal-view-AR.png" class="superImage" />
+<br/>Portal View (AR Version)</a>
+<p class ="superText"> An augmented reality version of the "portal to another world" effect. Portal renders above a Kanji marker.
+<br/>
+Video preview <a class="toc" href="https://www.youtube.com/watch?v=-gZ3Kv9juYg">here</a>. 
+</p>
+</div> -->
+
+    <!-- <div class="fancy">
+<a href="magic-cube.html" target="_blank">
+<img src="images/demo/magic-cube.png" class="superImage" />
+<br/>Magic Cube Effect</a>
+<p class ="superText"> Creates a "magic cube effect" that overlays a cube covered with six AR markers <a class="toc" href="markers/cube.png">in this pattern</a>. 
+<br/>
+</p>
+</div>
+
+<div class="fancy">
+<a href="globe-multi-marker.html" target="_blank">
+<img src="images/demo/globe-multi-marker.png" class="superImage" />
+<br/>Globe with Multiple Markers</a>
+<p class ="superText"> Similar to the Rotating Globe example: places a globe over a Kanji marker. If Kanji marker is blocked, uses other markers (<a class="toc" href="markers/letterA.png">letter A</a> and <a class="toc" href="markers/letterB.png">letter B</a>) to position the globe. </p>
+</div>
+
+<div class="fancy">
+<a href="refraction.html" target="_blank">
+<img src="images/demo/refraction.png" class="superImage" />
+<br/>Refraction</a>
+<p class ="superText"> Creates a rotating torus knot above a Kanji marker. The surface of the knot refracts the scene behind it.
+<br/>
+</p>
+</div>
+
+<div class="fancy">
+<a href="shadow.html" target="_blank">
+<img src="images/demo/shadow.png" class="superImage" />
+<br/>Shadow</a>
+<p class ="superText"> Creates a rotating torus knot above a Kanji marker. The knot casts a shadow onto the plane containing the marker. </p>
+</div>
+
+<div class="fancy">
+<a href="shadow-balls.html" target="_blank">
+<img src="images/demo/shadow-balls.png" class="superImage" />
+<br/>Shadow Balls</a>
+<p class ="superText"> Creates four colored bouncing basketballs around a Kanji marker. The balls cast shadows onto the plane containing the marker. </p>
+</div>
+
+<div class="fancy">
+<a href="parabolic-path.html" target="_blank">
+<img src="images/demo/parabolic-path.png" class="superImage" />
+<br/>Parabolic Path</a>
+<p class ="superText"> A basketball launches from a <a class="toc" href="markers/letterA.png">Letter-A</a> marker and falls towards a <a class="toc" href="markers/letterB.png">Letter-B</a> marker, following a parabolic path. The ball casts shadows, and a clipping plane (see above example) is used
+to make the ball disappear into the marker. </p>
+</div> -->
+
+    <!--
+<div class="fancy">
+<a href="screen-hole.html" target="_blank">
+<img src="images/demo/screen-hole.png" class="superImage" />
+<br/>Screen Hole with Multiple Markers</a>
+<p class ="superText"> Simulating a "hole-in-the-wall" effect; uses <a href="markers/kanji-abcd.png">Kanji-ABCD</a> pattern. For simplicity, open <a href="screen-hole-QR.png">this image</a> and scan the QR code with your phone/tablet to be brought directly to the example (idea from Jerome Etienne). </p>
+</div>
+-->
+
+    <!--
+<div class="fancy">
+<a href="zzzz.html" target="_blank">
+<img src="images/demo/zzzz.png" class="superImage" />
+<br/>zzzz</a>
+<p class ="superText"> ... </p>
+</div>
+-->
+    <script>
+
+        //Device capabilitiy initialization
+        function getCapabilities() {
+
+            //Browser Information 
+            var elem = document.getElementById("userAgentDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.userAgent);
+
+            document.getElementById("userAgentDetails").innerHTML = navigator.userAgent.toString();
+
+            elem = document.getElementById("osDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.platform);
+
+            document.getElementById("osDetails").innerHTML = navigator.platform.toString();
+
+            elem = document.getElementById("langDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.language);
+
+            document.getElementById("langDetails").innerHTML = navigator.language.toString();
+
+            //Device Specification 
+            elem = document.getElementById("memoryDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.deviceMemory);
+
+            document.getElementById("memoryDetails").innerHTML = navigator.deviceMemory.toString() + "GB";
+
+            elem = document.getElementById("cpuDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.hardwareConcurrency);
+
+            document.getElementById("cpuDetails").innerHTML = navigator.hardwareConcurrency.toString() + " Logical Processors";
+
+            var canvas = document.createElement('canvas');
+            var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+            if (gl) {
+                var renderer = gl.getParameter(gl.RENDERER);
+                var vendor = gl.getParameter(gl.VENDOR);
+                var version = gl.getParameter(gl.VERSION);
+                var shadingLanguageVersion = gl.getParameter(gl.SHADING_LANGUAGE_VERSION);
+
+                var vendor2 = getUnmaskedInfo(gl).vendor;
+                var renderer2 = getUnmaskedInfo(gl).renderer;
+
+                console.log('GPU Renderer:', renderer);
+                console.log('GPU Vendor:', vendor);
+                console.log('GPU Version:', version);
+                console.log('Shading Language Version:', shadingLanguageVersion);
+                console.log('Manufacture Details:', vendor2);
+                console.log('Manufacture Render Detials:', renderer2);
+
+            }
+
+
+            function getUnmaskedInfo(gl) {
+                var unMaskedInfo = {
+                    renderer: '',
+                    vendor: ''
+                };
+
+                var dbgRenderInfo = gl.getExtension("WEBGL_debug_renderer_info");
+                if (dbgRenderInfo != null) {
+                    unMaskedInfo.renderer = gl.getParameter(dbgRenderInfo.UNMASKED_RENDERER_WEBGL);
+                    unMaskedInfo.vendor = gl.getParameter(dbgRenderInfo.UNMASKED_VENDOR_WEBGL);
+                }
+
+                return unMaskedInfo;
+            }
+
+            elem = document.getElementById("gpuDetails");
+
+            elem.style.color = 'blue';
+
+            document.getElementById("gpuDetails").innerHTML = '<br>GPU Renderer: ' + renderer + '<br>' + 'GPU Vendor: ' + vendor + '<br>' + 'GPU Version: ' + version + '<br>' + 'Shading Language Version: ' + shadingLanguageVersion + '<br>' + 'Manufacture Details: ' + vendor2 + '<br>' + 'Manufacture Render Detials: ' + renderer2;
+
+            //Network Information
+            elem = document.getElementById("connType");
+
+            elem.style.color = 'blue';
+            console.log(navigator.connection.effectiveType);
+
+            document.getElementById("connType").innerHTML = navigator.connection.effectiveType.toString() + " Connection";
+
+            elem = document.getElementById("speedDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.connection.downlink);
+
+            document.getElementById("speedDetails").innerHTML = navigator.connection.downlink.toString() + " MBps";
+
+
+            elem = document.getElementById("modeDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.connection.saveData);
+
+            document.getElementById("modeDetails").innerHTML = navigator.connection.saveData.toString();
+
+            //Battery Status
+            elem = document.getElementById("battDetails");
+
+            elem.style.color = 'blue';
+            console.log(navigator.getBattery());
+
+            let batteryIsCharging = false;
+
+            navigator.getBattery().then((battery) => {
+                batteryIsCharging = battery.charging;
+                document.getElementById("battDetails").innerHTML = batteryIsCharging.toString();
+
+                battery.addEventListener("chargingchange", () => {
+                    batteryIsCharging = battery.charging;
+
+                    document.getElementById("battDetails").innerHTML = batteryIsCharging.toString();
+                });
+
+            });
+
+            //Geolocation
+            elem1 = document.getElementById("geoDetails1");
+            elem2 = document.getElementById("geoDetails2");
+
+
+            elem1.style.color = 'blue';
+            elem2.style.color = 'blue';
+
+            if ('geolocation' in navigator) {
+
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    navigator.geolocation.watchPosition(successCallback, errorCallback);
+                });
+
+            } else {
+                console.log('Geolocation is not supported');
+                document.getElementById("geoDetails1").innerHTML = 'Geolocation is not supported';
+                document.getElementById("geoDetails2").innerHTML = 'Geolocation is not supported';
+            }
+
+
+            function successCallback(position) {
+                // Handle the updated position
+                console.log(position.coords.latitude); // Latitude
+                document.getElementById("geoDetails1").innerHTML = position.coords.latitude.toString();
+
+                console.log(position.coords.longitude); // Longitude
+                document.getElementById("geoDetails2").innerHTML = position.coords.longitude.toString();
+            }
+
+            function errorCallback(error) {
+                // Handle the error
+                console.log('Error code: ' + error.code);
+                console.log('Error message: ' + error.message);
+            }
+
+
+            //Device Orientation
+            elem = document.getElementById("oriDetails");
+
+            elem.style.color = 'blue';
+
+            if ('onorientationchange' in window) {
+                // Current orientation
+                var orientation = window.orientation;
+                document.getElementById("oriDetails").innerHTML = orientation + " Orientation";
+
+                window.addEventListener('orientationchange', function () {
+                    // New orientation when it changes
+                    var orientation = window.orientation;
+                    document.getElementById("oriDetails").innerHTML = orientation + " Orientation";
+                });
+
+            } else {
+                document.getElementById("oriDetails").innerHTML = 'Device orientation is not supported';
+                console.log('Device orientation is not supported');
+            }
+
+
+            elem1 = document.getElementById("codecDetails");
+            elem2 = document.getElementById("powerDetails");
+
+            elem1.style.color = 'blue';
+            elem2.style.color = 'blue';
+
+            //Media Capabilities
+
+            const mediaConfig = {
+                type: 'media-source',
+                video: {
+                    contentType: 'video/mp4',
+                    bitrate: 5000, // Set the desired bitrate value
+                    framerate: 30, // Set the desired framerate value
+                    height: 720, // Set the desired height value
+                    width: 360 // Set the desired height value
+                }
+            };
+            if ('mediaCapabilities' in navigator) {
+                navigator.mediaCapabilities.decodingInfo(mediaConfig)
+                    .then(function (info) {
+
+                        // Indicates if the codec is supported
+                        console.log(info.supported);
+                        document.getElementById("codecDetails").innerHTML = info.supported.toString();
+
+                        // Indicates if it's a power-efficient option 
+                        console.log(info.powerEfficient);
+                        document.getElementById("powerDetails").innerHTML = info.powerEfficient.toString();
+                    })
+                    .catch(function (error) {
+                        console.error('Error retrieving media capabilities:', error);
+                        document.getElementById("codecDetails").innerHTML = "N/A";
+                        document.getElementById("powerDetails").innerHTML = "N/A";
+                    });
+            } else {
+                console.log('Media capabilities are not supported');
+                document.getElementById("codecDetails").innerHTML = "Not Supported";
+                document.getElementById("powerDetails").innerHTML = "Not Supported";
+            }
+
+
+            if (navigator.permissions) {
+                // API is supported
+                checkPermission('geolocation', 'geoDetails');
+                checkPermission('camera', 'camDetails');
+                checkPermission('microphone', 'micDetails');
+                checkPermission('notifications', 'notiDetails');
+                checkPermission('clipboard-write', 'clipWDetails');
+                checkPermission('push', 'pushDetails');
+                checkPermission('midi', 'midiDetails');
+                //checkPermission('ambient-light-sensor','lightDetails');
+                checkPermission('accelerometer', 'accelerDetails');
+                checkPermission('gyroscope', 'gyroDetails');
+                checkPermission('magnetometer', 'magnetDetails');
+                checkPermission('clipboard-read', 'clipRDetails');
+                // checkPermission('speaker-selection','speakerDetails');
+
+            } else {
+                // API is not supported
+                console.log('not supported');
+                document.getElementById("geoDetails").innerHTML = "Not Supported";
+            }
+
+        }
+
+        // let previousPermissionState = '';
+
+        // function handlePermissionChange(permissionStatus) {
+        //   const currentPermissionState = permissionStatus.state;
+        //   if (currentPermissionState !== previousPermissionState) {
+        //     console.log('Permission state changed:', currentPermissionState);
+        //     // Additional logic based on permission state change
+        //     previousPermissionState = currentPermissionState;
+        //   }
+        // }
+
+        // function checkPermissionStatus() {
+        //   navigator.permissions.query({ name: 'camera' })
+        //     .then(permissionStatus => {
+        //       handlePermissionChange(permissionStatus);
+        //     })
+        //     .catch(error => {
+        //       console.error('Error occurred while checking permission status:', error);
+        //     });
+        // }
+
+
+        function checkPermission(permissionName, descriptor) {
+            navigator.permissions.query({ name: permissionName, userVisibleOnly: true })
+                .then(permissionStatus => {
+
+
+                    elem = document.getElementById(descriptor);
+                    elem.style.color = 'blue';
+
+                    console.log(permissionStatus.state);
+                    document.getElementById(descriptor).innerHTML = permissionStatus.state.toString();
+
+                    permissionStatus.addEventListener("onchange", () => {
+
+                        document.getElementById(descriptor).innerHTML = permissionStatus.state.toString();
+                        console.log(permissionStatus.state + "Changed");
+                    });
+
+                    //checkPermissionStatus()
+
+                    // setInterval(checkPermissionStatus, 1000);
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error occurred while requesting permission:', error);
+                });
+        }
+
+
+        getCapabilities();
+
+
+    </script>
+</body>
+
+</html>

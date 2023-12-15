@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<title>MODEL 02</title>
+	<!-- include three.js library -->
+	<script src='js/three.js'></script>
+	<script src='js/OBJLoader.js'></script>
+	<script src='js/MTLLoader.js'></script>
+	<!-- include jsartookit -->
+	<script src="jsartoolkit5/artoolkit.min.js"></script>
+	<script src="jsartoolkit5/artoolkit.api.js"></script>
+	<!-- include threex.artoolkit -->
+	<script src="threex/threex-artoolkitsource.js"></script>
+	<script src="threex/threex-artoolkitcontext.js"></script>
+	<script src="threex/threex-arbasecontrols.js"></script>
+	<script src="threex/threex-armarkercontrols.js"></script>
+	<link rel=stylesheet href="css/progress.css"/>
+	<script crossorigin="anonymous"></script>
+</head>
+
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+	<div class="progress">
+		<div class='bar' id="phase 1">
+		  <div class="label" id="phase 1 label">0%</div>
+		</div>
+	</div>
+   <div class='progress2'>
+         <div class="label2"><h3>Total Loading Duration</h3></div>
+	</div>
+   <div class='progress3'>
+		<div class='bar' id="phase 2">
+			<div class="label" id="phase 2 label">0ms</div>
+		</div>  
+	</div>
+<script>
+
+var scene, camera, renderer, clock, deltaTime, totalTime;
+
+var arToolkitSource, arToolkitContext;
+
+var markerRoot1;
+
+var mesh1;
+
+initialize();
+animate();
+
+function initialize()
+{
+	scene = new THREE.Scene();
+
+	let ambientLight = new THREE.AmbientLight( 0xcccccc, 1.0 );
+	scene.add( ambientLight );
+				
+	camera = new THREE.Camera();
+	scene.add(camera);
+
+	renderer = new THREE.WebGLRenderer({
+		antialias : true,
+		alpha: true
+	});
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	renderer.setSize( 640, 480 );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	clock = new THREE.Clock();
+	deltaTime = 0;
+	totalTime = 0;
+	
+	////////////////////////////////////////////////////////////
+	// setup arToolkitSource
+	////////////////////////////////////////////////////////////
+
+	arToolkitSource = new THREEx.ArToolkitSource({
+		sourceType : 'webcam',
+	});
+
+	function onResize()
+	{
+		arToolkitSource.onResize()	
+		arToolkitSource.copySizeTo(renderer.domElement)	
+		if ( arToolkitContext.arController !== null )
+		{
+			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+		}	
+	}
+
+	arToolkitSource.init(function onReady(){
+		onResize()
+	});
+	
+	// handle resize event
+	window.addEventListener('resize', function(){
+		onResize()
+	});
+	
+	////////////////////////////////////////////////////////////
+	// setup arToolkitContext
+	////////////////////////////////////////////////////////////	
+
+	// create atToolkitContext
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: 'https://finalar.github.io/data/camera_para.dat',
+		detectionMode: 'mono'
+	});
+	
+	// copy projection matrix to camera when initialization complete
+	arToolkitContext.init( function onCompleted(){
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	});
+
+	////////////////////////////////////////////////////////////
+	// setup markerRoots
+	////////////////////////////////////////////////////////////
+
+	// build markerControls
+	markerRoot1 = new THREE.Group();
+	scene.add(markerRoot1);
+	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
+		type: 'pattern', patternUrl: "https://finalar.github.io/data/hiro.patt",
+	})
+
+	let geometry1 = new THREE.PlaneBufferGeometry(1,1, 4,4);
+	let loader = new THREE.TextureLoader();
+	// let texture = loader.load( 'images/earth.jpg', render );
+	let material1 = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.5 } );
+	mesh1 = new THREE.Mesh( geometry1, material1 );
+	mesh1.rotation.x = -Math.PI/2;
+	markerRoot1.add( mesh1 );
+	
+	function onProgress(xhr) { 
+		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' ); 
+		progress('phase 1', xhr.loaded / xhr.total * 100);     
+     }
+
+	function onError(xhr) { 
+		console.log( 'An error happened' ); 
+		progress('phase 1', 'An error happened');     
+     }
+	var begin=Date.now();
+	var end;
+
+	console.time("Time this");
+	new THREE.MTLLoader()
+		.setPath( 'https://finalar.github.io/models/Pirate/' )
+		.load( 'Pirate.mtl', function ( materials ) {
+			materials.preload();
+			new THREE.OBJLoader()
+				.setMaterials( materials )
+				.setPath( 'https://finalar.github.io/models/Pirate/' )
+				.load( 'Pirate.obj', function ( group ) {
+
+					mesh0 = group.children[0];
+					mesh0.material.side = THREE.DoubleSide;
+					mesh0.position.y = 0.25;
+					mesh0.scale.set(0.50,0.50,0.50);
+					markerRoot1.add(mesh0);
+					console.timeEnd("Time this")
+					end= Date.now()
+					var timeSpent=(end-begin);
+	                progressTime('phase 2', timeSpent);
+
+				}, onProgress, onError );
+		});
+
+	// build markerControls
+	markerRoot2 = new THREE.Group();
+	scene.add(markerRoot2);
+	let markerControls2 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot2, {
+		type: 'pattern', patternUrl: "https://finalar.github.io/data/kanji.patt",
+	})
+
+	let geometry2 = new THREE.PlaneBufferGeometry(1,1, 4,4);
+	let loader2 = new THREE.TextureLoader();
+	// let texture = loader.load( 'images/earth.jpg', render );
+	let material2 = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.5 } );
+	mesh2 = new THREE.Mesh( geometry2, material2 );
+	mesh2.rotation.x = -Math.PI/2;
+	markerRoot2.add( mesh2 );
+	
+	function onProgress(xhr) { 
+		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' ); 
+		progress('phase 1', xhr.loaded / xhr.total * 100);     
+     }
+
+	function onError(xhr) { 
+		console.log( 'An error happened' ); 
+		progress('phase 1', 'An error happened');     
+     }
+	var begin=Date.now();
+	var end;
+
+	console.time("Time this");
+	new THREE.MTLLoader()
+		.setPath( 'https://finalar.github.io/models/Toothless/' )
+		.load( 'toothless.mtl', function ( materials ) {
+			materials.preload();
+			new THREE.OBJLoader()
+				.setMaterials( materials )
+				.setPath( 'https://finalar.github.io/models/Toothless/' )
+				.load( 'toothless.obj', function ( group ) {
+					mesh0 = group.children[0];
+					mesh0.material.side = THREE.DoubleSide;
+					mesh0.position.y = 0.05;
+					mesh0.scale.set(0.01,0.01,0.01);
+					markerRoot2.add(mesh0);
+					console.timeEnd("Time this")
+					end= Date.now()
+					var timeSpent=(end-begin);
+	                progressTime('phase 2', timeSpent);
+
+
+				}, onProgress, onError );
+		});
+
+
+	// build markerControls
+	markerRoot3 = new THREE.Group();
+	scene.add(markerRoot3);
+	let markerControls3 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot3, {
+		type: 'pattern', patternUrl: "https://finalar.github.io/data/letterA.patt",
+	})
+
+	let geometry3 = new THREE.PlaneBufferGeometry(1,1, 4,4);
+	let loader3 = new THREE.TextureLoader();
+	// let texture = loader.load( 'images/earth.jpg', render );
+	let material3 = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.5 } );
+	mesh3 = new THREE.Mesh( geometry3, material3 );
+	mesh3.rotation.x = -Math.PI/2;
+	markerRoot3.add( mesh3 );
+	
+	function onProgress(xhr) { 
+		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' ); 
+		progress('phase 1', xhr.loaded / xhr.total * 100);     
+     }
+
+	function onError(xhr) { 
+		console.log( 'An error happened' ); 
+		progress('phase 1', 'An error happened');     
+     }
+	var begin=Date.now();
+	var end;
+
+	console.time("Time this");
+	new THREE.MTLLoader()
+		.setPath( 'https://finalar.github.io/models/semi_truck/' )
+		.load( 'Blank.mtl', function ( materials ) {
+			materials.preload();
+			new THREE.OBJLoader()
+				.setMaterials( materials )
+				.setPath( 'https://finalar.github.io/models/semi_truck/' )
+				.load( '18550_Semi_Truck w_Trailer_wheel_v1_NEW.obj', function ( group ) {
+					mesh0 = group.children[0];
+					mesh0.material.side = THREE.DoubleSide;
+					mesh0.position.y = 1.0;
+					mesh0.scale.set(0.50,0.50,0.50);
+					markerRoot3.add(mesh0);
+					console.timeEnd("Time this")
+					end= Date.now()
+					var timeSpent=(end-begin);
+	                progressTime('phase 2', timeSpent);
+
+
+				}, onProgress, onError );
+		});
+
+
+	// build markerControls
+	markerRoot4 = new THREE.Group();
+	scene.add(markerRoot4);
+	let markerControls4 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot4, {
+		type: 'pattern', patternUrl: "https://finalar.github.io/data/letterB.patt",
+	})
+
+	let geometry4 = new THREE.PlaneBufferGeometry(1,1, 4,4);
+	let loader4 = new THREE.TextureLoader();
+	// let texture = loader.load( 'images/earth.jpg', render );
+	let material4 = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.5 } );
+	mesh4 = new THREE.Mesh( geometry4, material4 );
+	mesh4.rotation.x = -Math.PI/2;
+	markerRoot4.add( mesh4 );
+	
+	function onProgress(xhr) { 
+		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' ); 
+		progress('phase 1', xhr.loaded / xhr.total * 100);     
+     }
+
+	function onError(xhr) { 
+		console.log( 'An error happened' ); 
+		progress('phase 1', 'An error happened');     
+     }
+	var begin=Date.now();
+	var end;
+
+	console.time("Time this");
+	new THREE.MTLLoader()
+		.setPath( 'https://finalar.github.io/models/wolf/' )
+		.load( 'WOLF.MTL', function ( materials ) {
+			materials.preload();
+			new THREE.OBJLoader()
+				.setMaterials( materials )
+				.setPath( 'https://finalar.github.io/models/wolf/' )
+				.load( 'WOLF.OBJ', function ( group ) {
+					mesh0 = group.children[0];
+					mesh0.material.side = THREE.DoubleSide;
+					mesh0.position.y = 0.25;
+					mesh0.scale.set(3.0,3.0,3.0);
+					markerRoot4.add(mesh0);
+					console.timeEnd("Time this")
+					end= Date.now()
+					var timeSpent=(end-begin);
+	                progressTime('phase 2', timeSpent);
+
+				}, onProgress, onError );
+		});
+
+
+		// build markerControls
+	markerRoot5 = new THREE.Group();
+	scene.add(markerRoot5);
+	let markerControls5 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot5, {
+		type: 'pattern', patternUrl: "https://finalar.github.io/data/letterC.patt",
+	})
+
+	let geometry5 = new THREE.PlaneBufferGeometry(1,1, 4,4);
+	let loader5 = new THREE.TextureLoader();
+	// let texture = loader.load( 'images/earth.jpg', render );
+	let material5 = new THREE.MeshBasicMaterial( { color: 0x0000ff, opacity: 0.5 } );
+	mesh5 = new THREE.Mesh( geometry5, material5 );
+	mesh5.rotation.x = -Math.PI/2;
+	markerRoot5.add( mesh5 );
+	
+	function onProgress(xhr) { 
+		console.log( (xhr.loaded / xhr.total * 100) + '% loaded' ); 
+		progress('phase 1', xhr.loaded / xhr.total * 100);     
+     }
+
+	function onError(xhr) { 
+		console.log( 'An error happened' ); 
+		progress('phase 1', 'An error happened');     
+     }
+	var begin=Date.now();
+	var end;
+
+	console.time("Time this");
+	new THREE.MTLLoader()
+		.setPath( 'https://finalar.github.io/models/Skull2/' )
+		.load( 'Blank.mtl', function ( materials ) {
+			materials.preload();
+			new THREE.OBJLoader()
+				.setMaterials( materials )
+				.setPath( 'https://finalar.github.io/models/Skull2/' )
+				.load( 'CraneoOBJ.obj', function ( group ) {
+					mesh0 = group.children[0];
+					mesh0.material.side = THREE.DoubleSide;
+					mesh0.position.y = 0.25;
+					mesh0.scale.set(0.25,0.25,0.25);
+					markerRoot5.add(mesh0);
+					console.timeEnd("Time this")
+					end= Date.now()
+					var timeSpent=(end-begin);
+	                progressTime('phase 2', timeSpent);
+				}, onProgress, onError );
+		});
+}
+
+
+function update()
+{
+	// update artoolkit on every frame
+	if ( arToolkitSource.ready !== false )
+		arToolkitContext.update( arToolkitSource.domElement );
+}
+
+
+function render()
+{
+	renderer.render( scene, camera );
+}
+
+
+function animate()
+{
+	requestAnimationFrame(animate);
+	deltaTime = clock.getDelta();
+	totalTime += deltaTime;
+	update();
+	render();
+}
+
+//Prgress Loading Function
+function progress(phase, percentage) {
+  var elem = document.getElementById(phase);
+  var width = Math.floor(window.innerWidth* percentage)
+
+  //var width = Math.floor(percentage * 100);
+  //if (width <= 100) {
+    elem.style.width = percentage + '%';
+    document.getElementById(phase + " label").innerHTML = Math.floor(percentage) + '%';
+  //}
+  console.log("Progress width: " + width);
+  console.log("Progress presentage: " + percentage);
+}
+
+//Time loading 
+function progressTime(phase, duration) {
+  var elem = document.getElementById(phase);
+
+    elem.style.width = '100%';
+    document.getElementById(phase + " label").innerHTML = Math.floor(duration) + 'ms'+ ' -->' + Math.floor(duration/1000) + 's';
+    console.log("Progress duration: " + duration);
+}
+</script>
+
+</body>
+</html>

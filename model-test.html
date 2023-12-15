@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<title>MODEL 01</title>
+	<!-- include three.js library -->
+	<script src='https://finalar.github.io/js/three.js' crossOrigin="anonymous"></script>
+	<script src='https://finalar.github.io/js/OBJLoader.js'></script>
+	<script src='https://finalar.github.io/js/MTLLoader.js'></script>
+	<!-- include jsartookit -->
+	<script src="jsartoolkit5/artoolkit.min.js"></script>
+	<script src="jsartoolkit5/artoolkit.api.js"></script>
+	<!-- include threex.artoolkit -->
+	<script src="threex/threex-artoolkitsource.js"></script>
+	<script src="threex/threex-artoolkitcontext.js"></script>
+	<script src="threex/threex-arbasecontrols.js"></script>
+	<script src="threex/threex-armarkercontrols.js"></script>
+	<link rel=stylesheet href="css/progress.css" />
+	<link rel=stylesheet href="css/popup.css" />
+</head>
+
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+
+	<div class="progress">
+		<div class='bar' id="phase 1">
+			<div class="label" id="phase 1 label">0%</div>
+		</div>
+	</div>
+	<div class='progress2'>
+		<div class="label2">
+			<h3>Total Loading Duration</h3>
+		</div>
+	</div>
+	<div class='progress3'>
+		<div class='bar' id="phase 2">
+			<div class="label" id="phase 2 label">0ms</div>
+		</div>
+	</div>
+	<script>
+
+		var scene, camera, renderer, clock, deltaTime, totalTime;
+
+		var arToolkitSource, arToolkitContext;
+
+		var markerRoot1;
+
+		var mesh1;
+
+		// Usage example for different targets
+		const targetInfo1 = {
+			patternUrl: "https://finalar.github.io/data/hiro.patt",
+			meshColor: 0x0000ff,
+			modelPath: 'https://finalar.github.io/models/Toothless/',
+			modelFile: 'toothless.obj',
+			progressPhase: 'phase 2',
+			mappingPath: 'https://finalar.github.io/models/Toothless/',
+			mappingFile: 'toothless.mtl',
+			positionY: 0.05,
+			scaleSet: 0.01
+		};
+
+		const targetInfo2 = {
+			patternUrl: "https://finalar.github.io/data/kanji.patt",
+			meshColor: 0xff0000,
+			modelPath: 'https://finalar.github.io/models/Pirate/',
+			modelFile: 'Pirate.obj',
+			progressPhase: 'phase 2',
+			mappingPath: 'https://finalar.github.io/models/Pirate/',
+			mappingFile: 'Pirate.mtl',
+			positionY: 0.25,
+			scaleSet: 0.50
+		};
+
+		// initialize(targetInfo1);
+		// initialize(targetInfo2);
+
+		initialize()
+		animate();
+
+
+
+		function initialize() {
+			scene = new THREE.Scene();
+
+			let ambientLight = new THREE.AmbientLight(0xcccccc, 1.0);
+			scene.add(ambientLight);
+
+			camera = new THREE.Camera();
+			scene.add(camera);
+
+			renderer = new THREE.WebGLRenderer({
+				antialias: true,
+				alpha: true
+			});
+			renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+			renderer.setSize(640, 480);
+			renderer.domElement.style.position = 'absolute'
+			renderer.domElement.style.top = '0px'
+			renderer.domElement.style.left = '0px'
+			document.body.appendChild(renderer.domElement);
+
+			clock = new THREE.Clock();
+			deltaTime = 0;
+			totalTime = 0;
+
+			////////////////////////////////////////////////////////////
+			// setup arToolkitSource
+			////////////////////////////////////////////////////////////
+
+			arToolkitSource = new THREEx.ArToolkitSource({
+				sourceType: 'webcam',
+			});
+
+			function onResize() {
+				arToolkitSource.onResize()
+				arToolkitSource.copySizeTo(renderer.domElement)
+				if (arToolkitContext.arController !== null) {
+					arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)
+				}
+			}
+
+			arToolkitSource.init(function onReady() {
+				onResize()
+			});
+
+			//handle resize event
+			window.addEventListener('resize', function () {
+				onResize()
+			});
+
+			////////////////////////////////////////////////////////////
+			// setup arToolkitContext
+			////////////////////////////////////////////////////////////	
+
+			// create atToolkitContext
+			arToolkitContext = new THREEx.ArToolkitContext({
+				cameraParametersUrl: 'https://finalar.github.io/data/camera_para.dat',
+				detectionMode: 'mono'
+			});
+
+			// copy projection matrix to camera when initialization complete
+			arToolkitContext.init(function onCompleted() {
+				camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+			});
+
+			////////////////////////////////////////////////////////////
+			// setup markerRoots
+			////////////////////////////////////////////////////////////
+
+			// build markerControls
+			function dynamicMapping(targetInfo) {
+				markerRoot = new THREE.Group();
+				scene.add(markerRoot);
+				let markerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+					type: 'pattern',
+					patternUrl: targetInfo.patternUrl, // Use the pattern URL from targetInfo
+				});
+
+				let geometry = new THREE.PlaneBufferGeometry(1, 1, 4, 4);
+				let material = new THREE.MeshBasicMaterial({ color: targetInfo.meshColor, opacity: 0.5 });
+				let mesh = new THREE.Mesh(geometry, material);
+				mesh.rotation.x = -Math.PI / 2;
+				markerRoot.add(mesh);
+
+				// Load 3D models and handle progress for different targets here
+				// You can use targetInfo to determine which 3D models to load and how to handle progress.
+
+				function onProgress(xhr) {
+					console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+					progress('phase 1', xhr.loaded / xhr.total * 100);
+				}
+
+				function onError(xhr) {
+					console.log('An error happened');
+					progress('phase 1', 'An error happened');
+				}
+
+				var begin = Date.now();
+				var end;
+
+				console.time("Time this");
+				new THREE.MTLLoader()
+					.setPath(targetInfo.mappingPath) // Use the modelPath from targetInfo
+					.load(targetInfo.mappingFile, function (materials) {
+						materials.preload();
+						new THREE.OBJLoader()
+							.setMaterials(materials)
+							.setPath(targetInfo.modelPath)
+							.load(targetInfo.modelFile, function (group) {
+								mesh0 = group.children[0];
+								mesh0.material.side = THREE.DoubleSide;
+								mesh0.position.y = targetInfo.positionY;
+								mesh0.scale.set(targetInfo.scaleSet, targetInfo.scaleSet, targetInfo.scaleSet);
+								markerRoot.add(mesh0);
+								console.timeEnd("Time this");
+								end = Date.now();
+								var timeSpent = (end - begin);
+								progressTime(targetInfo.progressPhase, timeSpent);
+							}, onProgress, onError);
+					});
+			}
+			dynamicMapping(targetInfo1);
+			dynamicMapping(targetInfo2);
+		}
+
+
+
+		function update() {
+			// update artoolkit on every frame
+			if (arToolkitSource.ready !== false)
+				arToolkitContext.update(arToolkitSource.domElement);
+		}
+
+
+		function render() {
+			renderer.render(scene, camera);
+		}
+
+
+		function animate() {
+			requestAnimationFrame(animate);
+			deltaTime = clock.getDelta();
+			totalTime += deltaTime;
+			update();
+			render();
+		}
+		//Prgress Loading Function
+		function progress(phase, percentage) {
+			var elem = document.getElementById(phase);
+			var width = Math.floor(window.innerWidth * percentage)
+
+			//var width = Math.floor(percentage * 100);
+			//if (width <= 100) {
+			elem.style.width = percentage + '%';
+			document.getElementById(phase + " label").innerHTML = Math.floor(percentage) + '%';
+			//}
+			console.log("Progress width: " + width);
+			console.log("Progress presentage: " + percentage);
+		}
+
+		//Time loading 
+		function progressTime(phase, duration) {
+			var elem = document.getElementById(phase);
+
+			elem.style.width = '100%';
+			document.getElementById(phase + " label").innerHTML = Math.floor(duration) + 'ms' + ' -->' + Math.floor(duration / 1000) + 's';
+			console.log("Progress duration: " + duration);
+		}
+
+	</script>
+
+</body>
+
+</html>
